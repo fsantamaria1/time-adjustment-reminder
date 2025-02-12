@@ -62,41 +62,6 @@ class Employee(Base):
                 f"last_name={self.last_name})>")
 
 
-class AdpStatus(Base):
-    """
-    ADP status model for the database.
-    """
-    __tablename__ = 'Statuses'
-    __table_args__ = {'schema': os.environ.get('schema')}
-
-    status_id = Column(Integer, primary_key=True, autoincrement=True)
-    status_code = Column(String(50))
-
-    def __init__(self, status_code: str):
-        """
-        Initialize the ADP status object.
-        :param status_code: The status code.
-        """
-        # Check that the argument is of the correct type
-        if not isinstance(status_code, str):
-            raise TypeError("status_code must be a string")
-
-        self.status_code = status_code
-
-    def to_dict(self):
-        """
-        Convert the object to a dictionary.
-        :return: A dictionary containing the ADP status data.
-        """
-        return {
-            'status_id': self.status_id,
-            'status_code': self.status_code
-        }
-
-    def __repr__(self):
-        return f"<AdpStatus(status_id={self.status_id}, status_code={self.status_code})>"
-
-
 class Timecard(Base):
     """
     Timecard model for the database.
@@ -107,7 +72,6 @@ class Timecard(Base):
     timecard_id = Column(String(25), primary_key=True, nullable=False)
     associate_id = Column(String(20), ForeignKey(Employee.associate_id))
     pay_period_id = Column(Integer, nullable=False)
-    status_id = Column(Integer, ForeignKey(AdpStatus.status_id))
     has_exceptions = Column(Boolean, nullable=False)
 
     employee = relationship("Employee", back_populates="timecards")
@@ -117,14 +81,12 @@ class Timecard(Base):
                  timecard_id: str,
                  associate_id: str,
                  pay_period_id: int,
-                 status_id: int,
                  has_exceptions: bool):
         """
             Initialize the Timecard object.
             :param timecard_id: The timecard id.
             :param associate_id: The associate id.
             :param pay_period_id: The pay period id.
-            :param status_id: The status id.
             :param has_exceptions: Whether the timecard has exceptions.
             """
         # Check that all the arguments are of the correct type
@@ -134,15 +96,12 @@ class Timecard(Base):
             raise TypeError("associate_id must be a string")
         if not isinstance(pay_period_id, int):
             raise TypeError("pay_period_id must be an integer")
-        if not isinstance(status_id, int):
-            raise TypeError("status_id must be an integer")
         if not isinstance(has_exceptions, bool):
             raise TypeError("has_exceptions must be a boolean")
 
         self.timecard_id = timecard_id
         self.associate_id = associate_id
         self.pay_period_id = pay_period_id
-        self.status_id = status_id
         self.has_exceptions = has_exceptions
 
     def to_dict(self):
@@ -154,7 +113,6 @@ class Timecard(Base):
             'timecard_id': self.timecard_id,
             'associate_id': self.associate_id,
             'pay_period_id': self.pay_period_id,
-            'status_id': self.status_id,
             'has_exceptions': self.has_exceptions
         }
 
@@ -162,7 +120,6 @@ class Timecard(Base):
         return (f"<Timecard(timecard_id={self.timecard_id}, "
                 f"associate_id={self.associate_id}, "
                 f"pay_period_id={self.pay_period_id}, "
-                f"status_id={self.status_id}, "
                 f"has_exceptions={self.has_exceptions})>")
 
 
@@ -178,7 +135,6 @@ class DayEntry(Base):
     entry_date = Column(Date)
     clock_in_time = Column(DateTime(timezone=True))
     clock_out_time = Column(DateTime(timezone=True))
-    status_id = Column(Integer, ForeignKey(AdpStatus.status_id))
 
     timecard = relationship("Timecard", back_populates="day_entries")
 
@@ -187,8 +143,7 @@ class DayEntry(Base):
                  timecard_id: str,
                  entry_date: date,
                  clock_in_time: datetime,
-                 clock_out_time: datetime,
-                 status_id: int):
+                 clock_out_time: datetime):
         """
         Initialize the DayEntry object.
         :param entry_id: The entry
@@ -196,7 +151,6 @@ class DayEntry(Base):
         :param entry_date: The entry date.
         :param clock_in_time: The clock in time.
         :param clock_out_time: The clock out time.
-        :param status_id: The status id.
         """
 
         # Check that all the arguments are of the correct type
@@ -210,15 +164,12 @@ class DayEntry(Base):
             raise TypeError("clock_in_time must be a datetime")
         if not isinstance(clock_out_time, datetime):
             raise TypeError("clock_out_time must be a datetime")
-        if not isinstance(status_id, int):
-            raise TypeError("status_id must be an integer")
 
         self.entry_id = entry_id
         self.timecard_id = timecard_id
         self.entry_date = entry_date
         self.clock_in_time = clock_in_time
         self.clock_out_time = clock_out_time
-        self.status_id = status_id
 
     def to_dict(self):
         """
@@ -230,14 +181,17 @@ class DayEntry(Base):
             'timecard_id': self.timecard_id,
             'entry_date': self.entry_date,
             'clock_in_time': self.clock_in_time,
-            'clock_out_time': self.clock_out_time,
-            'status_id': self.status_id
+            'clock_out_time': self.clock_out_time
         }
 
     def __repr__(self):
+        print(f"<DayEntry(entry_id={self.entry_id}, "
+                f"timecard_id={self.timecard_id}, "
+                f"entry_date={self.entry_date}, "
+                f"clock_in_time={self.clock_in_time}, "
+                f"clock_out_time={self.clock_out_time}>")
         return (f"<DayEntry(entry_id={self.entry_id}, "
                 f"timecard_id={self.timecard_id}, "
                 f"entry_date={self.entry_date}, "
                 f"clock_in_time={self.clock_in_time}, "
-                f"clock_out_time={self.clock_out_time}, "
-                f"status_id={self.status_id})>")
+                f"clock_out_time={self.clock_out_time}>")
