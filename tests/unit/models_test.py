@@ -16,7 +16,7 @@ class TestEmployee:
         """
         Create a valid Employee object.
         """
-        return Employee(associate_id="associate_id", first_name='first name', last_name='last name')
+        return Employee(associate_id="associate_id", worker_id='worker_id', first_name='first name', last_name='last name')
 
     def test_employee_instantiation_with_valid_attributes(self, valid_employee: Employee):
         """
@@ -26,6 +26,7 @@ class TestEmployee:
         assert employee.associate_id == 'associate_id'
         assert employee.first_name == 'first name'
         assert employee.last_name == 'last name'
+        assert employee.worker_id == 'worker_id'
 
     def test_employee_to_dict(self, valid_employee: Employee):
         """
@@ -35,6 +36,7 @@ class TestEmployee:
         employee = valid_employee
         assert employee.to_dict() == {
             'associate_id': 'associate_id',
+            'worker_id': 'worker_id',
             'first_name': 'first name',
             'last_name': 'last name'
         }
@@ -45,8 +47,8 @@ class TestEmployee:
         :return:
         """
         employee = valid_employee
-        assert repr(employee) == ("<Employee(associate_id=associate_id, first_name=first name, "
-                                  "last_name=last name)>")
+        assert repr(employee) == ("<Employee(associate_id=associate_id, worker_id=worker_id, "
+                                  "first_name=first name, last_name=last name)>")
 
     def test_attempt_instantiate_employee_missing_attributes(self):
         """
@@ -55,14 +57,16 @@ class TestEmployee:
         """
         with pytest.raises(TypeError):
             # Missing required attributes
-            Employee(associate_id=None, first_name=None, last_name=None)
+            Employee(associate_id=None, worker_id=None, first_name=None, last_name=None)
 
     @pytest.mark.parametrize("kwargs, exception_message", [
-        ({"associate_id": 1, "first_name": 'last name', "last_name": 'last name'},
+        ({"associate_id": 1, "worker_id": 'worker_id', "first_name": 'last name', "last_name": 'last name'},
          "associate_id must be a string"),
-        ({"associate_id": 'associate_id', "first_name": 1, "last_name": 'last name'},
+        ({"associate_id": 'associate_id', "worker_id": 1, "first_name": 'last name', "last_name": 'last name'},
+         "worker_id must be a string"),
+        ({"associate_id": 'associate_id', "worker_id": 'worker_id', "first_name": 1, "last_name": 'last name'},
          "first_name must be a string"),
-        ({"associate_id": 'associate_id', "first_name": 'last name', "last_name": 1},
+        ({"associate_id": 'associate_id', "worker_id": 'worker_id', "first_name": 'last name', "last_name": 1},
          "last_name must be a string"),
     ])
     def test_employee_instantiation_with_invalid_attributes(self, kwargs, exception_message):

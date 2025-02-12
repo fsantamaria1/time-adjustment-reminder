@@ -18,6 +18,7 @@ class Employee(Base):
     __table_args__ = {'schema': os.environ.get('schema')}
 
     associate_id = Column(String(20), primary_key=True, nullable=False)
+    worker_id = Column(String(20), unique=True, nullable=False)
     first_name = Column(String(25))
     last_name = Column(String(25))
 
@@ -25,23 +26,28 @@ class Employee(Base):
 
     def __init__(self,
                  associate_id: str,
+                 worker_id: str,
                  first_name: str,
                  last_name: str):
         """
         Initialize the Employee object.
         :param associate_id: The associate id.
+        :param worker_id: The worker id.
         :param first_name: The first name of the employee.
         :param last_name: The last name of the employee.
         """
         # Check that all the arguments are of the correct type
         if not isinstance(associate_id, str):
             raise TypeError("associate_id must be a string")
+        if not isinstance(worker_id, str):
+            raise TypeError("worker_id must be a string")
         if not isinstance(first_name, str):
             raise TypeError("first_name must be a string")
         if not isinstance(last_name, str):
             raise TypeError("last_name must be a string")
 
         self.associate_id = associate_id
+        self.worker_id = worker_id
         self.first_name = first_name
         self.last_name = last_name
 
@@ -52,12 +58,14 @@ class Employee(Base):
         """
         return {
             'associate_id': self.associate_id,
+            'worker_id': self.worker_id,
             'first_name': self.first_name,
             'last_name': self.last_name
         }
 
     def __repr__(self):
         return (f"<Employee(associate_id={self.associate_id}, "
+                f"worker_id={self.worker_id}, "
                 f"first_name={self.first_name}, "
                 f"last_name={self.last_name})>")
 
