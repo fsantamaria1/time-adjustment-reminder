@@ -185,11 +185,6 @@ class DayEntry(Base):
         }
 
     def __repr__(self):
-        print(f"<DayEntry(entry_id={self.entry_id}, "
-                f"timecard_id={self.timecard_id}, "
-                f"entry_date={self.entry_date}, "
-                f"clock_in_time={self.clock_in_time}, "
-                f"clock_out_time={self.clock_out_time}>")
         return (f"<DayEntry(entry_id={self.entry_id}, "
                 f"timecard_id={self.timecard_id}, "
                 f"entry_date={self.entry_date}, "
