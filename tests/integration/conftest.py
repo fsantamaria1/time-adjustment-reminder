@@ -23,28 +23,28 @@ Session = sessionmaker(bind=engine)
 def generate_unique_primary_key(model, pk_column, start=1000, end=999999):
     """Generate a random integer for the primary key and ensure it doesn't exist in the database."""
     while True:
-        session = Session(bind=engine)
-        random_pk = random.randint(start, end)  # Generate a random integer within the range
-        try:
-            # Try querying the database for an existing primary key
-            session.query(model).filter(pk_column == random_pk).one()
-        except NoResultFound:
-            # If no result found, the primary key is unique
-            return random_pk
+        with Session(bind=engine) as session:
+            random_pk = random.randint(start, end)  # Generate a random integer within the range
+            try:
+                # Try querying the database for an existing primary key
+                session.query(model).filter(pk_column == random_pk).one()
+            except NoResultFound:
+                # If no result found, the primary key is unique
+                return random_pk
 
 
 def generate_unique_primary_key_str(model, pk_column, start=1000, end=999999):
     """Generate a random integer for the primary key and ensure it doesn't exist in the database."""
     while True:
-        session = Session(bind=engine)
-        # Generate a random integer within the range
-        random_pk = str(random.randint(start, end))
-        try:
-            # Try querying the database for an existing primary key
-            session.query(model).filter(pk_column == random_pk).one()
-        except NoResultFound:
-            # If no result found, the primary key is unique
-            return random_pk
+        with Session(bind=engine) as session:
+            # Generate a random integer within the range
+            random_pk = str(random.randint(start, end))
+            try:
+                # Try querying the database for an existing primary key
+                session.query(model).filter(pk_column == random_pk).one()
+            except NoResultFound:
+                # If no result found, the primary key is unique
+                return random_pk
 
 
 @pytest.fixture(name='db_connection', scope='module')
