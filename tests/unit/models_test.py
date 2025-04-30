@@ -215,7 +215,7 @@ class TestDayEntry:
         assert repr(day_entry) == ("<DayEntry(entry_id=entry_id, timecard_id=timecard_id, "
                                    "entry_date=2022-01-01, "
                                    "clock_in_time=2022-01-01 00:00:00, "
-                                   "clock_out_time=2022-01-01 00:00:00>")
+                                   "clock_out_time=2022-01-01 00:00:00)>")
 
     def test_attempt_instantiate_day_entry_missing_attributes(self):
         """

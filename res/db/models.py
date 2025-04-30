@@ -197,4 +197,4 @@ class DayEntry(Base):
                 f"timecard_id={self.timecard_id}, "
                 f"entry_date={self.entry_date}, "
                 f"clock_in_time={self.clock_in_time}, "
-                f"clock_out_time={self.clock_out_time}>")
+                f"clock_out_time={self.clock_out_time})>")
