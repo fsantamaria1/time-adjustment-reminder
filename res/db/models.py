@@ -17,7 +17,7 @@ class Employee(Base):
     __tablename__ = 'Employees'
     __table_args__ = {'schema': os.environ.get('schema')}
 
-    associate_id = Column(String(20), primary_key=True, nullable=False)
+    associate_id = Column(String(20), primary_key=True, nullable=True)
     worker_id = Column(String(20), unique=True, nullable=False)
     first_name = Column(String(25))
     last_name = Column(String(25))
@@ -77,7 +77,7 @@ class Timecard(Base):
     __tablename__ = 'Timecards'
     __table_args__ = {'schema': os.environ.get('schema')}
 
-    timecard_id = Column(String(25), primary_key=True, nullable=False)
+    timecard_id = Column(String(25), primary_key=True, nullable=True)
     associate_id = Column(String(20), ForeignKey(Employee.associate_id))
     pay_period_id = Column(Integer, nullable=False)
     has_exceptions = Column(Boolean, nullable=False)
@@ -138,7 +138,7 @@ class DayEntry(Base):
     __tablename__ = 'DayEntries'
     __table_args__ = {'schema': os.environ.get('schema')}
 
-    entry_id = Column(String(50), primary_key=True, nullable=False)
+    entry_id = Column(String(50), primary_key=True, nullable=True)
     timecard_id = Column(String(25), ForeignKey(Timecard.timecard_id))
     entry_date = Column(Date)
     clock_in_time = Column(DateTime(timezone=True))
