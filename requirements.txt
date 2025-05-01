@@ -1,0 +1,4 @@
+python-dotenv~=1.0.1
+SQLAlchemy~=2.0.37
+pyodbc~=5.2.0
+requests~=2.32.3
