@@ -29,8 +29,6 @@ class TestDatabaseIntegration:
         with db_instance.get_new_session() as session:
             try:
                 session.execute(text("SELECT 1"))
-            # except Exception as e:
-            #     pytest.fail(f"Failed to execute SQL query: {e}")
             except OperationalError as e:
                 pytest.fail(f"OperationalError: Failed to execute SQL query: {e}")
             except ProgrammingError as e:
