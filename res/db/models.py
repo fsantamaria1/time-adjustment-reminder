@@ -15,7 +15,7 @@ class Employee(Base):
     Employee model for the database.
     """
     __tablename__ = 'Employees'
-    __table_args__ = {'schema': os.environ.get('schema')}
+    __table_args__ = {'schema': os.environ.get('schema', 'dbo')}
 
     associate_id = Column(String(20), primary_key=True)
     worker_id = Column(String(20), unique=True, nullable=False)
@@ -75,7 +75,7 @@ class Timecard(Base):
     Timecard model for the database.
     """
     __tablename__ = 'Timecards'
-    __table_args__ = {'schema': os.environ.get('schema')}
+    __table_args__ = {'schema': os.environ.get('schema', 'dbo')}
 
     timecard_id = Column(String(25), primary_key=True)
     associate_id = Column(String(20), ForeignKey(Employee.associate_id))
@@ -136,7 +136,7 @@ class DayEntry(Base):
     Day entry model for the database.
     """
     __tablename__ = 'DayEntries'
-    __table_args__ = {'schema': os.environ.get('schema')}
+    __table_args__ = {'schema': os.environ.get('schema', 'dbo')}
 
     entry_id = Column(String(50), primary_key=True)
     timecard_id = Column(String(25), ForeignKey(Timecard.timecard_id))
