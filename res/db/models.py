@@ -154,7 +154,7 @@ class DayEntry(Base):
                  clock_out_time: datetime):
         """
         Initialize the DayEntry object.
-        :param entry_id: The entry
+        :param entry_id: The unique identifier for the entry.
         :param timecard_id: The timecard id.
         :param entry_date: The entry date.
         :param clock_in_time: The clock in time.
