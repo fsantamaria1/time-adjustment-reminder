@@ -22,7 +22,7 @@ class TestAPIConnectorIntegration:
         Fixture to return an APIConnector object.
         :return: APIConnector object
         """
-        return APIConnector(token=token)
+        return APIConnector(token=token, brand_id=brand_id)
 
     def test_get_brands_integration(self, api_connector):
         """
@@ -41,7 +41,7 @@ class TestAPIConnectorIntegration:
         Test that the get_contacts method returns a list of contacts.
         :param api_connector: The APIConnector object
         """
-        contacts = api_connector.get_contacts(brand_id)
+        contacts = api_connector.get_contacts()
         assert isinstance(contacts, dict)
         assert len(contacts) > 0
         assert "data" in contacts
@@ -54,6 +54,6 @@ class TestAPIConnectorIntegration:
         Test that the get_all_contacts method returns a list of contacts.
         :param api_connector: The APIConnector object
         """
-        contacts = api_connector.get_all_contacts(brand_id)
+        contacts = api_connector.get_all_contacts()
         assert isinstance(contacts, list)
         assert len(contacts) > 0
