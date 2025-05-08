@@ -18,6 +18,7 @@ class APIConnector:
         "contact_details": "/brands/{brand_id}/contacts/{contact_id}",
         "custom_fields": "/brands/{brand_id}/custom-fields/{field_id}"
     }
+    DEFAULT_RETRY_WAIT_TIME = 5
 
     def __init__(self, token: str, brand_id: str = None):
         self.token = token
@@ -45,12 +46,11 @@ class APIConnector:
         return url
 
     def __make_request(self, url_key: str = None, method: str = "GET", dynamic_data: dict = None,
-                       params: dict = None, retry_wait_time: int = 5):
+                       params: dict = None):
         """
         Make a request to the SlickText API.
         :param url_key: The key for the endpoint
         :param method: The HTTP method (GET, POST, etc.)
-        :param retry_wait_time: Time to wait before retrying in case of failure
         :return: The response from the API
         """
         url = self.__generate_url(url_key, dynamic_data)
@@ -76,13 +76,10 @@ class APIConnector:
                     return response.json()
 
                 logging.warning("Error %d: %s", response.status_code, response.text)
-                retries -= 1
-                time.sleep(retry_wait_time)
             except requests.exceptions.RequestException as e:
                 logging.error("Request failed: %s", e)
-                retries -= 1
-                time.sleep(retry_wait_time)
-                return None
+            retries -= 1
+            time.sleep(self.DEFAULT_RETRY_WAIT_TIME)
         logging.error("Failed after %d retries: %s %s", 5, method, url)
         return None
 
