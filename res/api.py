@@ -19,9 +19,17 @@ class APIConnector:
         "custom_fields": "/brands/{brand_id}/custom-fields/{field_id}"
     }
 
-    def __init__(self, token: str):
+    def __init__(self, token: str, brand_id: str = None):
         self.token = token
+        self.brand_id = brand_id
         self.session = requests.Session()
+
+    def set_brand_id(self, brand_id: str):
+        """
+        Set the brand ID for the API requests.
+        :param brand_id: The brand ID to set.
+        """
+        self.brand_id = brand_id
 
     def __generate_url(self, key: str, dynamic_data: dict = None) -> str:
         """
@@ -85,16 +93,18 @@ class APIConnector:
         """
         return self.__make_request("brands")
 
-    def get_contacts(self, brand_id, limit=None, offset=None, page=None, page_size=None, **filters):
+    def get_contacts(self, limit=None, offset=None, page=None, page_size=None, **filters):
         """
         Get contacts with pagination and filtering.
-        :param brand_id: ID of the brand
         :param limit: Max items per request (max 250)
         :param offset: Items to skip
         :param page: Page number (0-based)
         :param page_size: Items per page
         :param filters: Filter parameters as key=value
         """
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call get_contacts")
+
         params = {}
         if limit is not None:
             params['limit'] = limit
@@ -108,11 +118,11 @@ class APIConnector:
 
         return self.__make_request(
             "contacts",
-            dynamic_data={"brand_id": brand_id},
+            dynamic_data={"brand_id": self.brand_id},
             params=params
         )
 
-    def get_all_contacts(self, brand_id, **filters):
+    def get_all_contacts(self, **filters):
         """Get all contacts with automatic pagination."""
         all_contacts = []
         limit = 250
@@ -120,7 +130,6 @@ class APIConnector:
 
         while True:
             batch = self.get_contacts(
-                brand_id,
                 limit=limit,
                 offset=offset,
                 **filters
@@ -135,18 +144,24 @@ class APIConnector:
 
         return all_contacts
 
-    def get_contact_details(self, brand_id, contact_id):
+    def get_contact_details(self, contact_id):
         """
         Get details of a specific contact.
         """
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call get_contact_details")
+
         return self.__make_request(
             "contact_details",
-            dynamic_data={"brand_id": brand_id, "contact_id": contact_id}
+            dynamic_data={"brand_id": self.brand_id, "contact_id": contact_id}
         )
 
-    def get_custom_field(self, brand_id, field_id):
+    def get_custom_field(self, field_id):
         """Get details for a custom field."""
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call get_custom_field")
+
         return self.__make_request(
             "custom_fields",
-            dynamic_data={"brand_id": brand_id, "field_id": field_id}
+            dynamic_data={"brand_id": self.brand_id, "field_id": field_id}
         )
