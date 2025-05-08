@@ -77,3 +77,76 @@ class APIConnector:
                 return None
         logging.error("Failed after %d retries: %s %s", 5, method, url)
         return None
+
+    def get_brands(self):
+        """
+        Get all brands associated with the account.
+        :return: List of brands
+        """
+        return self.__make_request("brands")
+
+    def get_contacts(self, brand_id, limit=None, offset=None, page=None, page_size=None, **filters):
+        """
+        Get contacts with pagination and filtering.
+        :param brand_id: ID of the brand
+        :param limit: Max items per request (max 250)
+        :param offset: Items to skip
+        :param page: Page number (0-based)
+        :param page_size: Items per page
+        :param filters: Filter parameters as key=value
+        """
+        params = {}
+        if limit is not None:
+            params['limit'] = limit
+        if offset is not None:
+            params['offset'] = offset
+        if page is not None:
+            params['page'] = page
+        if page_size is not None:
+            params['pageSize'] = page_size
+        params.update(filters)
+
+        return self.__make_request(
+            "contacts",
+            dynamic_data={"brand_id": brand_id},
+            params=params
+        )
+
+    def get_all_contacts(self, brand_id, **filters):
+        """Get all contacts with automatic pagination."""
+        all_contacts = []
+        limit = 250
+        offset = 0
+
+        while True:
+            batch = self.get_contacts(
+                brand_id,
+                limit=limit,
+                offset=offset,
+                **filters
+            )
+
+            if not batch or not isinstance(batch.get('data'), list):
+                break
+            all_contacts.extend(batch.get('data', []))
+            if not batch.get('pagingData', {}).get('hasMore', False):
+                break
+            offset += limit
+
+        return all_contacts
+
+    def get_contact_details(self, brand_id, contact_id):
+        """
+        Get details of a specific contact.
+        """
+        return self.__make_request(
+            "contact_details",
+            dynamic_data={"brand_id": brand_id, "contact_id": contact_id}
+        )
+
+    def get_custom_field(self, brand_id, field_id):
+        """Get details for a custom field."""
+        return self.__make_request(
+            "custom_fields",
+            dynamic_data={"brand_id": brand_id, "field_id": field_id}
+        )
