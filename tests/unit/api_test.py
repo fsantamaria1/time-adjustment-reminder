@@ -28,14 +28,6 @@ class TestAPIConnectorUnit:
         assert api_connector.session is not None
         assert isinstance(api_connector.session, requests.Session)
 
-    # def test_generate_url(self, api_connector: APIConnector):
-    #     """
-    #     Test that the __generate_url method generates the correct URL.
-    #     :param api_connector: The APIConnector object
-    #     """
-    #     url = api_connector._APIConnector__generate_url("brands")
-    #     assert url == f"{APIConnector.BASE_URL}{APIConnector.ENDPOINTS['brands']}"
-
     def test_generate_url(self, monkeypatch, api_connector: APIConnector):
         """
         Test that the generated URL inside a public method matches expectations.
@@ -45,7 +37,7 @@ class TestAPIConnectorUnit:
         # Mock response object with expected status & data
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"data": [{"test_data 1"}, {"test_data 2"}]}
+        mock_response.json.return_value = {"data": [{"test_data 1": 1}, {"test_data 2": 2}]}
 
         # Mock session.request to return the mock response
         mock_request = MagicMock(return_value=mock_response)
