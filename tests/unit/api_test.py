@@ -58,7 +58,7 @@ class TestAPIConnectorUnit:
         """
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"data": [{"test_data 1"}, {"test_data 2"}]}
+        mock_response.json.return_value = {"data": [{"test_data 1": 1}, {"test_data 2": 2}]}
 
         mock_request = MagicMock(return_value=mock_response)
         monkeypatch.setattr(api_connector.session, "request", mock_request)
@@ -66,7 +66,7 @@ class TestAPIConnectorUnit:
         # Call get_brands(), which internally calls __make_request()
         result = api_connector.get_brands()
 
-        assert result == {"data": [{"test_data 1"}, {"test_data 2"}]}
+        assert result == {"data": [{"test_data 1": 1}, {"test_data 2": 2}]}
 
     def test_make_request_failure(self, monkeypatch, api_connector: APIConnector):
         """
