@@ -8,8 +8,8 @@ from res.api import APIConnector
 
 # Load the environment variables
 load_dotenv()
-token = os.environ.get('SLICK_TEXT_API_KEY') or os.getenv('SLICK_TEXT_API_KEY')
-brand_id = os.environ.get('SLICK_TEXT_BRAND_ID') or os.getenv('SLICK_TEXT_BRAND_ID')
+token = os.environ.get('SLICK_TEXT_API_KEY')
+brand_id = os.environ.get('SLICK_TEXT_BRAND_ID')
 
 
 class TestAPIConnectorIntegration:
