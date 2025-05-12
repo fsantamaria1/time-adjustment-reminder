@@ -38,7 +38,7 @@ class TestAPIConnectorIntegration:
 
     def test_get_contacts_integration(self, api_connector):
         """
-        Test that the get_contacts method returns a list of contacts.
+        Test that the get_contacts method returns a dictionary containing contact data.
         :param api_connector: The APIConnector object
         """
         contacts = api_connector.get_contacts()

@@ -97,7 +97,7 @@ class APIConnector:
     def get_brands(self):
         """
         Get all brands associated with the account.
-        :return: List of brands
+        :return: Dictionary containing brand data.
         """
         return self.__make_request("brands")
 
