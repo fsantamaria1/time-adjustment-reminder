@@ -26,7 +26,7 @@ class TestAPIConnectorIntegration:
 
     def test_get_brands_integration(self, api_connector):
         """
-        Test that the get_brands method returns a list of brands.
+        Test that the get_brands method returns a dictionary of brands.
         :param api_connector: The APIConnector object
         """
         brands = api_connector.get_brands()
