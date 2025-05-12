@@ -19,6 +19,7 @@ class APIConnector:
         "custom_fields": "/brands/{brand_id}/custom-fields/{field_id}"
     }
     DEFAULT_RETRY_WAIT_TIME = 5
+    MAX_RETRIES = 5
 
     def __init__(self, token: str, brand_id: str = None):
         self.token = token
@@ -59,7 +60,7 @@ class APIConnector:
             "Content-Type": "application/json"
         }
 
-        retries = 5
+        retries = self.MAX_RETRIES
         while retries > 0:
             try:
                 logging.debug("Making %s request to %s with headers %s",
@@ -80,7 +81,7 @@ class APIConnector:
                 logging.error("Request failed: %s", e)
             retries -= 1
             time.sleep(self.DEFAULT_RETRY_WAIT_TIME)
-        logging.error("Failed after %d retries: %s %s", self.DEFAULT_RETRY_WAIT_TIME, method, url)
+        logging.error("Failed after %d retries: %s %s", self.MAX_RETRIES, method, url)
         return None
 
     def get_brands(self):
