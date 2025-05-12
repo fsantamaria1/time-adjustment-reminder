@@ -80,7 +80,7 @@ class APIConnector:
                 logging.error("Request failed: %s", e)
             retries -= 1
             time.sleep(self.DEFAULT_RETRY_WAIT_TIME)
-        logging.error("Failed after %d retries: %s %s", 5, method, url)
+        logging.error("Failed after %d retries: %s %s", self.DEFAULT_RETRY_WAIT_TIME, method, url)
         return None
 
     def get_brands(self):
