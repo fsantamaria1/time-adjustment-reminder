@@ -3,6 +3,7 @@ This module contains the APIConnector class for interacting with the SlickText A
 """
 import logging
 import time
+import json
 import requests
 
 
@@ -74,7 +75,16 @@ class APIConnector:
 
                 if response.status_code in [200, 201]:
                     logging.debug("Success: %s %s", method, url)
-                    return response.json()
+                    try:
+                        return response.json()
+                    except json.JSONDecodeError as e:
+                        logging.error(
+                            "Failed to decode JSON response for %s %s: %s",
+                            method,
+                            url,
+                            e
+                        )
+                        return None
 
                 logging.warning("Error %d: %s", response.status_code, response.text)
             except requests.exceptions.RequestException as e:
