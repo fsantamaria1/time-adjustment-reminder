@@ -112,6 +112,6 @@ class TestAPIConnectorUnit:
         result = api_connector.get_brands()
 
         # Should retry 5 times
-        assert api_connector.session.request.call_count == 5
+        assert api_connector.session.request.call_count == APIConnector.MAX_RETRIES
         # Should return None after all retries fail
         assert result is None
