@@ -1,7 +1,8 @@
 """
 This module contains functions to interact with the database.
 """
-from .models import Employee
+from sqlalchemy import or_
+from .models import Employee, Timecard, DayEntry
 
 
 def get_all_employees(session):
@@ -31,3 +32,16 @@ def get_employee_by_worker_id(session, worker_id):
     :return: Employee object
     """
     return session.query(Employee).filter(Employee.worker_id == worker_id).first()
+
+
+def get_time_cards_with_missing_punches(session):
+    """
+    Get time cards with missing punches.
+    :param session: The database session.
+    :return: A list of time cards with missing punches.
+    """
+    # 2001-01-01 00:00:00.0000000 -05:00 is ADPs placeholder for missing punches
+    return session.query(Timecard).join(DayEntry).filter(
+        or_(DayEntry.clock_in_time == '2001-01-01 00:00:00.0000000 -05:00',
+            DayEntry.clock_out_time == '2001-01-01 00:00:00.0000000 -05:00')
+    ).all()
