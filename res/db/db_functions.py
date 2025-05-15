@@ -56,3 +56,14 @@ def get_employees_with_missing_punches(session):
     time_cards = get_time_cards_with_missing_punches(session)
     employee_ids = {timecard.associate_id for timecard in time_cards}
     return session.query(Employee).filter(Employee.associate_id.in_(employee_ids)).all()
+
+
+def get_worker_ids_with_missing_punches(session):
+    """
+    Get worker IDs with time cards containing missing punches.
+    :param session: The database session.
+    :return: A list of worker IDs.
+    """
+    time_cards = get_time_cards_with_missing_punches(session)
+    worker_ids = {timecard.employee.worker_id for timecard in time_cards}
+    return worker_ids
