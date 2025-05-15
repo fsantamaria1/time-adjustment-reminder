@@ -45,3 +45,14 @@ def get_time_cards_with_missing_punches(session):
         or_(DayEntry.clock_in_time == '2001-01-01 00:00:00.0000000 -05:00',
             DayEntry.clock_out_time == '2001-01-01 00:00:00.0000000 -05:00')
     ).all()
+
+
+def get_employees_with_missing_punches(session):
+    """
+    Get employees with missing punches.
+    :param session: The database session.
+    :return: A list of employees with missing punches.
+    """
+    time_cards = get_time_cards_with_missing_punches(session)
+    employee_ids = {timecard.associate_id for timecard in time_cards}
+    return session.query(Employee).filter(Employee.associate_id.in_(employee_ids)).all()
