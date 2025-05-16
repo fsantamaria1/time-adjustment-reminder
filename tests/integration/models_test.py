@@ -3,7 +3,7 @@ This module contains integration tests for the database models.
 """
 import pytest
 from sqlalchemy.exc import IntegrityError
-from res.db.models import Employee, Timecard, DayEntry
+from res.db.models import Employee, Timecard, DayEntry, PayPeriod
 
 
 class TestEmployee:
@@ -45,6 +45,26 @@ class TestEmployee:
 
         with pytest.raises(IntegrityError):
             db_session.flush()
+
+
+class TestPayPeriod:
+    """
+    Integration tests for the PayPeriod model.
+    """
+
+    def test_pay_period_valid(self, db_session, valid_pay_period: PayPeriod):
+        """
+        Test that a PayPeriod record can be created with valid attributes.
+        """
+        db_session.add(valid_pay_period)
+        db_session.flush()
+        pay_period = db_session.query(PayPeriod).filter(
+            PayPeriod.pay_period_id == valid_pay_period.pay_period_id
+        ).first()
+
+        assert pay_period.pay_period_id == valid_pay_period.pay_period_id
+        assert pay_period.pay_period_start == valid_pay_period.pay_period_start
+        assert pay_period.pay_period_end == valid_pay_period.pay_period_end
 
 
 class TestTimecard:
