@@ -3,7 +3,7 @@ This module contains tests for the models in the database package.
 """
 from datetime import date, datetime
 import pytest
-from res.db.models import Employee, Timecard, DayEntry
+from res.db.models import Employee, Timecard, DayEntry, PayPeriod
 
 
 class TestEmployee:
@@ -86,6 +86,52 @@ class TestEmployee:
             # Invalid attributes
             Employee(**kwargs)
         assert str(exc_info.value) == exception_message
+
+
+class TestPayPeriod:
+    """
+    Test for the PayPeriod class.
+    """
+
+    @pytest.fixture
+    def valid_pay_period(self) -> PayPeriod:
+        """
+        Create a valid PayPeriod object.
+        """
+        return PayPeriod(
+            pay_period_start=date(2022, 1, 1),
+            pay_period_end=date(2022, 1, 15)
+        )
+
+    def test_pay_period_instantiation_with_valid_attributes(self, valid_pay_period: PayPeriod):
+        """
+        Test that the PayPeriod class can be instantiated with valid attributes.
+        """
+        pay_period = valid_pay_period
+        assert pay_period.pay_period_start == date(2022, 1, 1)
+        assert pay_period.pay_period_end == date(2022, 1, 15)
+
+    def test_pay_period_to_dict(self, valid_pay_period: PayPeriod):
+        """
+        Test the to_dict method of the PayPeriod class.
+        :return:
+        """
+        pay_period = valid_pay_period
+
+        assert pay_period.to_dict() == {
+            'pay_period_id': None,
+            'pay_period_start': date(2022, 1, 1),
+            'pay_period_end': date(2022, 1, 15)
+        }
+
+    def test_pay_period_repr(self, valid_pay_period: PayPeriod):
+        """
+        Test the __repr__ method of the PayPeriod class.
+        :return:
+        """
+        pay_period = valid_pay_period
+        assert repr(pay_period) == ("<PayPeriod(pay_period_id=None, pay_period_start=2022-01-01, "
+                                    "pay_period_end=2022-01-15)>")
 
 
 class TestTimecard:
