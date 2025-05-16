@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from sqlalchemy.exc import NoResultFound
 from res.db.config import Config
-from res.db.models import Employee, Timecard, DayEntry
+from res.db.models import Employee, Timecard, DayEntry, PayPeriod
 
 
 # Create a single engine for the entire test suite
@@ -77,6 +77,16 @@ def valid_employee_fixture() -> Employee:
     worker_id = generate_unique_primary_key_str(Employee, Employee.worker_id)
     return Employee(associate_id=associate_id, worker_id=worker_id,
                     first_name='Test First Name', last_name='Test Last Name')
+
+
+@pytest.fixture(name='valid_pay_period', scope='function')
+def valid_pay_period_fixture() -> PayPeriod:
+    """
+    Create a valid PayPeriod with a unique primary key.
+    :return: a PayPeriod object
+    """
+    return PayPeriod(pay_period_start=date(2023, 1, 1),
+                     pay_period_end=date(2023, 1, 15))
 
 
 @pytest.fixture(name='valid_timecard', scope='function')
