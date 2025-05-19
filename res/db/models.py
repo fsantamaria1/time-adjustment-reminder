@@ -126,7 +126,7 @@ class Timecard(Base):
 
     timecard_id = Column(String(25), primary_key=True)
     associate_id = Column(String(20), ForeignKey(Employee.associate_id))
-    pay_period_id = Column(Integer, ForeignKey(PayPeriod.pay_period_id))
+    pay_period_id = Column(Integer, ForeignKey(PayPeriod.pay_period_id), nullable=False)
     has_exceptions = Column(Boolean, nullable=False)
 
     employee = relationship("Employee", back_populates="timecards")
