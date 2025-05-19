@@ -133,6 +133,16 @@ class TestPayPeriod:
         assert repr(pay_period) == ("<PayPeriod(pay_period_id=None, pay_period_start=2022-01-01, "
                                     "pay_period_end=2022-01-15)>")
 
+    def test_pay_period_start_after_end(self):
+        """
+        Test that the PayPeriod class cannot be instantiated with start date after end date.
+        :return:
+        """
+        with pytest.raises(ValueError) as exc_info:
+            # Start date after end date
+            PayPeriod(pay_period_start=date(2022, 1, 16), pay_period_end=date(2022, 1, 15))
+        assert str(exc_info.value) == "pay_period_start must be before pay_period_end"
+
 
 class TestTimecard:
     """
