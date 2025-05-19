@@ -82,7 +82,8 @@ def valid_employee_fixture() -> Employee:
 @pytest.fixture(name='valid_pay_period', scope='function')
 def valid_pay_period_fixture() -> PayPeriod:
     """
-    Create a valid PayPeriod with a unique primary key.
+    Create a valid PayPeriod object with dates.
+    Note: the primary key is assigned upon persistence (e.g., when flushed or committed to the database).
     :return: a PayPeriod object
     """
     return PayPeriod(pay_period_start=date(2023, 1, 1),
