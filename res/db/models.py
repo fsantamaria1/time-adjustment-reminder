@@ -96,6 +96,8 @@ class PayPeriod(Base):
             raise TypeError("pay_period_start must be a date")
         if not isinstance(pay_period_end, date):
             raise TypeError("pay_period_end must be a date")
+        if pay_period_start > pay_period_end:
+            raise ValueError("pay_period_start must be before pay_period_end")
 
         self.pay_period_start = pay_period_start
         self.pay_period_end = pay_period_end
