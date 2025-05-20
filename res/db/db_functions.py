@@ -2,7 +2,7 @@
 This module contains functions to interact with the database.
 """
 from sqlalchemy import or_
-from .models import Employee, Timecard, DayEntry
+from .models import Employee, Timecard, DayEntry, PayPeriod
 
 
 def get_all_employees(session):
@@ -67,3 +67,13 @@ def get_worker_ids_with_missing_punches(session):
     time_cards = get_time_cards_with_missing_punches(session)
     worker_ids = {timecard.employee.worker_id for timecard in time_cards}
     return worker_ids
+
+
+def get_pay_period_by_start_date(session, start_date):
+    """
+    Get pay period by start date.
+    :param session: The database session.
+    :param start_date: The start date of the pay period.
+    :return: A PayPeriod object or None if not found.
+    """
+    return session.query(PayPeriod).filter(PayPeriod.pay_period_start == start_date).first()
