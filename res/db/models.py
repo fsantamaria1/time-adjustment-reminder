@@ -200,8 +200,8 @@ class DayEntry(Base):
                  entry_id: str,
                  timecard_id: str,
                  entry_date: date,
-                 clock_in_time: datetime or str,
-                 clock_out_time: datetime or str):
+                 clock_in_time: datetime | str,
+                 clock_out_time: datetime | str):
         """
         Initialize the DayEntry object.
         :param entry_id: The unique identifier for the entry.
