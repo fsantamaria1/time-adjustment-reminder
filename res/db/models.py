@@ -70,6 +70,55 @@ class Employee(Base):
                 f"last_name={self.last_name})>")
 
 
+class PayPeriod(Base):
+    """
+    Pay period model for the database.
+    """
+    __tablename__ = 'PayPeriods'
+    __table_args__ = {'schema': os.environ.get('schema', 'dbo')}
+
+    pay_period_id = Column(Integer, primary_key=True, autoincrement=True)
+    pay_period_start = Column(Date)
+    pay_period_end = Column(Date)
+
+    timecards = relationship("Timecard", back_populates="pay_period")
+
+    def __init__(self,
+                 pay_period_start: date,
+                 pay_period_end: date):
+        """
+        Initialize the PayPeriod object.
+        :param pay_period_start: The start date of the pay period.
+        :param pay_period_end: The end date of the pay period.
+        """
+        # Check that all the arguments are of the correct type
+        if not isinstance(pay_period_start, date):
+            raise TypeError("pay_period_start must be a date")
+        if not isinstance(pay_period_end, date):
+            raise TypeError("pay_period_end must be a date")
+        if pay_period_start > pay_period_end:
+            raise ValueError("pay_period_start must be before pay_period_end")
+
+        self.pay_period_start = pay_period_start
+        self.pay_period_end = pay_period_end
+
+    def to_dict(self):
+        """
+        Convert the object to a dictionary.
+        :return: A dictionary containing the pay period data.
+        """
+        return {
+            'pay_period_id': self.pay_period_id,
+            'pay_period_start': self.pay_period_start,
+            'pay_period_end': self.pay_period_end
+        }
+
+    def __repr__(self):
+        return (f"<PayPeriod(pay_period_id={self.pay_period_id}, "
+                f"pay_period_start={self.pay_period_start}, "
+                f"pay_period_end={self.pay_period_end})>")
+
+
 class Timecard(Base):
     """
     Timecard model for the database.
@@ -79,11 +128,12 @@ class Timecard(Base):
 
     timecard_id = Column(String(25), primary_key=True)
     associate_id = Column(String(20), ForeignKey(Employee.associate_id))
-    pay_period_id = Column(Integer, nullable=False)
+    pay_period_id = Column(Integer, ForeignKey(PayPeriod.pay_period_id), nullable=False)
     has_exceptions = Column(Boolean, nullable=False)
 
     employee = relationship("Employee", back_populates="timecards")
     day_entries = relationship("DayEntry", back_populates="timecard")
+    pay_period = relationship("PayPeriod", back_populates="timecards")
 
     def __init__(self,
                  timecard_id: str,
@@ -157,8 +207,10 @@ class DayEntry(Base):
         :param entry_id: The unique identifier for the entry.
         :param timecard_id: The timecard id.
         :param entry_date: The entry date.
-        :param clock_in_time: The clock in time.
-        :param clock_out_time: The clock out time.
+        :param clock_in_time: The clock in time in the format '%Y-%m-%d %H:%M:%S.%f %z'.
+        Example '2001-01-01 00:00:00.0000000 -05:00'
+        :param clock_out_time: The clock out time in the format '%Y-%m-%d %H:%M:%S.%f %z'.
+        Example '2001-01-01 00:00:00.0000000 -05:00'
         """
 
         # Check that all the arguments are of the correct type
@@ -168,10 +220,6 @@ class DayEntry(Base):
             raise TypeError("timecard_id must be a string")
         if not isinstance(entry_date, date):
             raise TypeError("entry_date must be a date")
-        if not isinstance(clock_in_time, datetime):
-            raise TypeError("clock_in_time must be a datetime")
-        if not isinstance(clock_out_time, datetime):
-            raise TypeError("clock_out_time must be a datetime")
 
         self.entry_id = entry_id
         self.timecard_id = timecard_id

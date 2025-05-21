@@ -3,7 +3,7 @@ This module contains tests for the models in the database package.
 """
 from datetime import date, datetime
 import pytest
-from res.db.models import Employee, Timecard, DayEntry
+from res.db.models import Employee, Timecard, DayEntry, PayPeriod
 
 
 class TestEmployee:
@@ -86,6 +86,62 @@ class TestEmployee:
             # Invalid attributes
             Employee(**kwargs)
         assert str(exc_info.value) == exception_message
+
+
+class TestPayPeriod:
+    """
+    Test for the PayPeriod class.
+    """
+
+    @pytest.fixture
+    def valid_pay_period(self) -> PayPeriod:
+        """
+        Create a valid PayPeriod object.
+        """
+        return PayPeriod(
+            pay_period_start=date(2022, 1, 1),
+            pay_period_end=date(2022, 1, 15)
+        )
+
+    def test_pay_period_instantiation_with_valid_attributes(self, valid_pay_period: PayPeriod):
+        """
+        Test that the PayPeriod class can be instantiated with valid attributes.
+        """
+        pay_period = valid_pay_period
+        assert pay_period.pay_period_start == date(2022, 1, 1)
+        assert pay_period.pay_period_end == date(2022, 1, 15)
+
+    def test_pay_period_to_dict(self, valid_pay_period: PayPeriod):
+        """
+        Test the to_dict method of the PayPeriod class.
+        :return:
+        """
+        pay_period = valid_pay_period
+
+        assert pay_period.to_dict() == {
+            'pay_period_id': None,
+            'pay_period_start': date(2022, 1, 1),
+            'pay_period_end': date(2022, 1, 15)
+        }
+
+    def test_pay_period_repr(self, valid_pay_period: PayPeriod):
+        """
+        Test the __repr__ method of the PayPeriod class.
+        :return:
+        """
+        pay_period = valid_pay_period
+        assert repr(pay_period) == ("<PayPeriod(pay_period_id=None, pay_period_start=2022-01-01, "
+                                    "pay_period_end=2022-01-15)>")
+
+    def test_pay_period_start_after_end(self):
+        """
+        Test that the PayPeriod class cannot be instantiated with start date after end date.
+        :return:
+        """
+        with pytest.raises(ValueError) as exc_info:
+            # Start date after end date
+            PayPeriod(pay_period_start=date(2022, 1, 16), pay_period_end=date(2022, 1, 15))
+        assert str(exc_info.value) == "pay_period_start must be before pay_period_end"
 
 
 class TestTimecard:
@@ -240,14 +296,6 @@ class TestDayEntry:
           "clock_in_time": datetime(2022, 1, 1, 0, 0, 0),
           "clock_out_time": datetime(2022, 1, 1, 0, 0, 0)},
             "entry_date must be a date"),
-        ({"entry_id": "entry_id", "timecard_id": "timecard_id", "entry_date": date(2022, 1, 1),
-          "clock_in_time": 1,
-          "clock_out_time": datetime(2022, 1, 1, 0, 0, 0)},
-            "clock_in_time must be a datetime"),
-        ({"entry_id": "entry_id", "timecard_id": "timecard_id", "entry_date": date(2022, 1, 1),
-          "clock_in_time": datetime(2022, 1, 1, 0, 0, 0),
-          "clock_out_time": 1},
-            "clock_out_time must be a datetime"),
     ])
     def test_day_entry_instantiation_with_invalid_attributes(self, kwargs, exception_message):
         """
