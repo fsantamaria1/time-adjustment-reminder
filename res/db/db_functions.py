@@ -95,6 +95,18 @@ def get_worker_ids_with_missing_punches(session):
     return worker_ids
 
 
+def get_worker_ids_with_missing_punches_by_pay_period(session, pay_period_id):
+    """
+    Get worker IDs with time cards containing missing punches by pay period.
+    :param session: The database session.
+    :param pay_period_id: The ID of the pay period.
+    :return: A list of worker IDs.
+    """
+    time_cards = get_time_cards_with_missing_punches_by_pay_period(session, pay_period_id)
+    worker_ids = {timecard.employee.worker_id for timecard in time_cards}
+    return worker_ids
+
+
 def get_pay_period_by_start_date(session, start_date):
     """
     Get pay period by start date.
