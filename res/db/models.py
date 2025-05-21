@@ -207,8 +207,10 @@ class DayEntry(Base):
         :param entry_id: The unique identifier for the entry.
         :param timecard_id: The timecard id.
         :param entry_date: The entry date.
-        :param clock_in_time: The clock in time.
-        :param clock_out_time: The clock out time.
+        :param clock_in_time: The clock in time in the format '%Y-%m-%d %H:%M:%S.%f %z'.
+        Example '2001-01-01 00:00:00.0000000 -05:00'
+        :param clock_out_time: The clock out time in the format '%Y-%m-%d %H:%M:%S.%f %z'.
+        Example '2001-01-01 00:00:00.0000000 -05:00'
         """
 
         # Check that all the arguments are of the correct type
