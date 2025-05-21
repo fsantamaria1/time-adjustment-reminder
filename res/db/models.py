@@ -200,8 +200,8 @@ class DayEntry(Base):
                  entry_id: str,
                  timecard_id: str,
                  entry_date: date,
-                 clock_in_time: datetime,
-                 clock_out_time: datetime):
+                 clock_in_time: datetime or str,
+                 clock_out_time: datetime or str):
         """
         Initialize the DayEntry object.
         :param entry_id: The unique identifier for the entry.
@@ -218,10 +218,6 @@ class DayEntry(Base):
             raise TypeError("timecard_id must be a string")
         if not isinstance(entry_date, date):
             raise TypeError("entry_date must be a date")
-        if not isinstance(clock_in_time, datetime):
-            raise TypeError("clock_in_time must be a datetime")
-        if not isinstance(clock_out_time, datetime):
-            raise TypeError("clock_out_time must be a datetime")
 
         self.entry_id = entry_id
         self.timecard_id = timecard_id

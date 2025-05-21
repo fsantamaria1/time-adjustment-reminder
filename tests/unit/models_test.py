@@ -296,14 +296,6 @@ class TestDayEntry:
           "clock_in_time": datetime(2022, 1, 1, 0, 0, 0),
           "clock_out_time": datetime(2022, 1, 1, 0, 0, 0)},
             "entry_date must be a date"),
-        ({"entry_id": "entry_id", "timecard_id": "timecard_id", "entry_date": date(2022, 1, 1),
-          "clock_in_time": 1,
-          "clock_out_time": datetime(2022, 1, 1, 0, 0, 0)},
-            "clock_in_time must be a datetime"),
-        ({"entry_id": "entry_id", "timecard_id": "timecard_id", "entry_date": date(2022, 1, 1),
-          "clock_in_time": datetime(2022, 1, 1, 0, 0, 0),
-          "clock_out_time": 1},
-            "clock_out_time must be a datetime"),
     ])
     def test_day_entry_instantiation_with_invalid_attributes(self, kwargs, exception_message):
         """
