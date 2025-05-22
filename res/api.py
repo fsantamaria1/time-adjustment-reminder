@@ -240,3 +240,32 @@ class APIConnector:
             "custom_fields",
             dynamic_data={"brand_id": self.brand_id, "field_id": field_id}
         )
+
+    def create_campaign(self, name, message, contact_list, send_time=None):
+        """
+        Create a new campaign.
+        :param name: The name of the campaign.
+        :param message: The message content of the campaign.
+        :param contact_list: The ID of the contact list to send the campaign to.
+        :param send_time: Optional send time for the campaign.
+        :return: The response from the API.
+        """
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call create_campaign")
+
+        body = {
+            "name": name,
+            "body": message,
+            "status": "scheduled" if send_time else "send",
+            "audience": {
+                "contact_lists": [contact_list]
+            },
+            "scheduled": send_time
+        }
+
+        return self.__make_request(
+            "campaigns",
+            method="POST",
+            dynamic_data={"brand_id": self.brand_id},
+            body=body
+        )
