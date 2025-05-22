@@ -51,7 +51,7 @@ class APIConnector:
         return url
 
     def __make_request(self, url_key: str = None, method: str = "GET", dynamic_data: dict = None,
-                       params: dict = None):
+                       params: dict = None, body: dict or list = None):
         """
         Make a request to the SlickText API.
         :param url_key: The key for the endpoint
@@ -74,7 +74,8 @@ class APIConnector:
                     method=method.upper(),
                     url=url,
                     headers=headers,
-                    params=params)
+                    params=params,
+                    json=body)
 
                 if response.status_code in [200, 201]:
                     logging.debug("Success: %s %s", method, url)
