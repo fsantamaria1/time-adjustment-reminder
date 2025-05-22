@@ -186,6 +186,51 @@ class APIConnector:
             }
         )
 
+    def add_contact_to_list(self, contact_id, list_id):
+        """
+        Add a contact to a list.
+        """
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call add_contact_to_list")
+        if not contact_id:
+            raise ValueError("contact_id must be provided to add a contact to a list")
+        if not list_id:
+            raise ValueError("list_id must be provided to add a contact to a list")
+
+        return self.__make_request(
+            "add_contact_to_list",
+            method="POST",
+            dynamic_data={"brand_id": self.brand_id},
+            body=[{
+                "contact_id": int(contact_id),
+                "lists": [list_id]
+            }]
+        )
+
+    def add_contacts_to_list(self, contact_ids, list_id):
+        """
+        Add multiple contacts to a list.
+        :param contact_ids: List of contact IDs to add.
+        :param list_id: The ID of the list to add contacts to.
+        """
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call add_contacts_to_list")
+        if not contact_ids or not isinstance(contact_ids, list):
+            raise ValueError("contact_ids must be provided to add contacts to a list")
+        if not list_id:
+            raise ValueError("list_id must be provided to add contacts to a list")
+        if len(contact_ids) <1:
+            return None
+
+        body = [{"contact_id": int(contact_id), "lists": [list_id]} for contact_id in contact_ids]
+
+        return self.__make_request(
+            "add_contact_to_list",
+            method="POST",
+            dynamic_data={"brand_id": self.brand_id},
+            body=body
+        )
+
     def get_custom_field(self, field_id):
         """Get details for a custom field."""
         if not self.brand_id:
