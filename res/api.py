@@ -56,9 +56,6 @@ class APIConnector:
         Make a request to the SlickText API.
         :param url_key: The key for the endpoint
         :param method: The HTTP method (GET, POST, etc.)
-        :param dynamic_data: A dictionary with dynamic values to be placed in the url.
-        :param params: Query parameters for the request
-        :param body: The body of the request (for POST, PUT, etc.)
         :return: The response from the API or None if the request fails
         """
         url = self.__generate_url(url_key, dynamic_data)
@@ -169,6 +166,24 @@ class APIConnector:
         return self.__make_request(
             "contact_details",
             dynamic_data={"brand_id": self.brand_id, "contact_id": contact_id}
+        )
+
+    def create_contact_list(self, name=None, description=None):
+        """
+        Creates a contact list
+        """
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call create_contact_list")
+        if not name:
+            raise ValueError("name must be provided to create a contact list")
+        return self.__make_request(
+            "create_list",
+            method="POST",
+            dynamic_data={"brand_id": self.brand_id},
+            body={
+                "name": name,
+                "description": description
+            }
         )
 
     def get_custom_field(self, field_id):
