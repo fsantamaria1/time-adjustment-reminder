@@ -56,6 +56,9 @@ class APIConnector:
         Make a request to the SlickText API.
         :param url_key: The key for the endpoint
         :param method: The HTTP method (GET, POST, etc.)
+        :param dynamic_data: A dictionary with dynamic values to be placed in the url.
+        :param params: Query parameters for the request
+        :param body: The body of the request (for POST, PUT, etc.)
         :return: The response from the API or None if the request fails
         """
         url = self.__generate_url(url_key, dynamic_data)
