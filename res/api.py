@@ -17,6 +17,9 @@ class APIConnector:
         "brand_details": "/brands/{brand_id}",
         "contacts": "/brands/{brand_id}/contacts",
         "contact_details": "/brands/{brand_id}/contacts/{contact_id}",
+        "create_list": "/brands/{brand_id}/lists",
+        "add_contact_to_list": "/brands/{brand_id}/lists/contacts",
+        "campaigns": "/brands/{brand_id}/campaigns/",
         "custom_fields": "/brands/{brand_id}/custom-fields/{field_id}"
     }
     DEFAULT_RETRY_WAIT_TIME = 5
