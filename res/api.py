@@ -219,7 +219,7 @@ class APIConnector:
             raise ValueError("contact_ids must be provided to add contacts to a list")
         if not list_id:
             raise ValueError("list_id must be provided to add contacts to a list")
-        if len(contact_ids) <1:
+        if len(contact_ids) < 1:
             return None
 
         body = [{"contact_id": int(contact_id), "lists": [list_id]} for contact_id in contact_ids]
