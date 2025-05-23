@@ -244,12 +244,12 @@ class APIConnector:
             dynamic_data={"brand_id": self.brand_id, "field_id": field_id}
         )
 
-    def create_campaign(self, name, message, contact_list, send_time=None):
+    def create_campaign(self, name, message, contact_list_id, send_time=None):
         """
         Create a new campaign.
         :param name: The name of the campaign.
         :param message: The message content of the campaign.
-        :param contact_list: The ID of the contact list to send the campaign to.
+        :param contact_list_id: The ID of the contact list to send the campaign to.
         :param send_time: Optional send time for the campaign.
         :return: The response from the API.
         """
@@ -261,7 +261,7 @@ class APIConnector:
             "body": message,
             "status": "scheduled" if send_time else "send",
             "audience": {
-                "contact_lists": [contact_list]
+                "contact_lists": [contact_list_id]
             },
             "scheduled": send_time
         }
