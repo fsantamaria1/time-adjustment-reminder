@@ -34,39 +34,31 @@ def get_employee_by_worker_id(session, worker_id):
     return session.query(Employee).filter(Employee.worker_id == worker_id).first()
 
 
-def get_time_cards_with_missing_punches(session):
+def get_time_cards_with_missing_punches(session, pay_period_id=None):
     """
     Get time cards with missing punches.
     :param session: The database session.
+    :param pay_period_id: (Optional) The ID of the pay period ID to filter by.
     :return: A list of time cards with missing punches.
     """
     # 2001-01-01 00:00:00.0000000 -05:00 is ADPs placeholder for missing punches
+    # 2000-01-01 00:00:00.0000000 +00:00 is an additional placeholder for missing punches
     missing_punch_times = [
         '2001-01-01 00:00:00.0000000 -05:00',
         '2000-01-01 00:00:00.0000000 +00:00'
     ]
-    return session.query(Timecard).join(DayEntry).filter(
+
+    # Query for time cards with missing punches
+    query = session.query(Timecard).join(DayEntry).filter(
         or_(DayEntry.clock_in_time.in_(missing_punch_times),
             DayEntry.clock_out_time.in_(missing_punch_times))
-    ).all()
+    )
 
+    # If a pay period ID is provided, filter by it
+    if pay_period_id is not None:
+        query = query.filter(Timecard.pay_period_id == pay_period_id)
 
-def get_time_cards_with_missing_punches_by_pay_period(session, pay_period_id):
-    """
-    Get time cards with missing punches by pay period.
-    :param session: The database session.
-    :param pay_period_id: The ID of the pay period.
-    :return: A list of time cards with missing punches for the specified pay period.
-    """
-    missing_punch_times = [
-        '2001-01-01 00:00:00.0000000 -05:00',
-        '2000-01-01 00:00:00.0000000 +00:00'
-    ]
-    return session.query(Timecard).join(DayEntry).filter(
-        Timecard.pay_period_id == pay_period_id,
-        or_(DayEntry.clock_in_time.in_(missing_punch_times),
-            DayEntry.clock_out_time.in_(missing_punch_times))
-    ).all()
+    return query.all()
 
 
 def get_employees_with_missing_punches(session):
@@ -87,7 +79,7 @@ def get_employees_with_missing_punches_by_pay_period(session, pay_period_id):
     :param pay_period_id: The ID of the pay period.
     :return: A list of employees with missing punches for the specified pay period.
     """
-    time_cards = get_time_cards_with_missing_punches_by_pay_period(session, pay_period_id)
+    time_cards = get_time_cards_with_missing_punches(session, pay_period_id)
     employee_ids = {timecard.associate_id for timecard in time_cards}
     return session.query(Employee).filter(Employee.associate_id.in_(employee_ids)).all()
 
@@ -110,7 +102,7 @@ def get_worker_ids_with_missing_punches_by_pay_period(session, pay_period_id):
     :param pay_period_id: The ID of the pay period.
     :return: A list of worker IDs.
     """
-    time_cards = get_time_cards_with_missing_punches_by_pay_period(session, pay_period_id)
+    time_cards = get_time_cards_with_missing_punches(session, pay_period_id)
     worker_ids = {timecard.employee.worker_id for timecard in time_cards}
     return worker_ids
 
