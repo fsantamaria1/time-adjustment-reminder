@@ -17,6 +17,9 @@ class APIConnector:
         "brand_details": "/brands/{brand_id}",
         "contacts": "/brands/{brand_id}/contacts",
         "contact_details": "/brands/{brand_id}/contacts/{contact_id}",
+        "create_list": "/brands/{brand_id}/lists",
+        "add_contact_to_list": "/brands/{brand_id}/lists/contacts",
+        "campaigns": "/brands/{brand_id}/campaigns",
         "custom_fields": "/brands/{brand_id}/custom-fields/{field_id}"
     }
     DEFAULT_RETRY_WAIT_TIME = 5
@@ -48,11 +51,14 @@ class APIConnector:
         return url
 
     def __make_request(self, url_key: str = None, method: str = "GET", dynamic_data: dict = None,
-                       params: dict = None):
+                       params: dict = None, body=None):
         """
         Make a request to the SlickText API.
         :param url_key: The key for the endpoint
         :param method: The HTTP method (GET, POST, etc.)
+        :param dynamic_data: A dictionary with dynamic values to be placed in the url.
+        :param params: Query parameters for the request
+        :param body: The body of the request (for POST requests). Either a dictionary or a list of dictionaries.
         :return: The response from the API or None if the request fails
         """
         url = self.__generate_url(url_key, dynamic_data)
@@ -71,7 +77,8 @@ class APIConnector:
                     method=method.upper(),
                     url=url,
                     headers=headers,
-                    params=params)
+                    params=params,
+                    json=body)
 
                 if response.status_code in [200, 201]:
                     logging.debug("Success: %s %s", method, url)
@@ -164,6 +171,69 @@ class APIConnector:
             dynamic_data={"brand_id": self.brand_id, "contact_id": contact_id}
         )
 
+    def create_contact_list(self, name=None, description=None):
+        """
+        Creates a contact list
+        """
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call create_contact_list")
+        if not name:
+            raise ValueError("name must be provided to create a contact list")
+        return self.__make_request(
+            "create_list",
+            method="POST",
+            dynamic_data={"brand_id": self.brand_id},
+            body={
+                "name": name,
+                "description": description
+            }
+        )
+
+    def add_contact_to_list(self, contact_id, list_id):
+        """
+        Add a contact to a list.
+        """
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call add_contact_to_list")
+        if not contact_id:
+            raise ValueError("contact_id must be provided to add a contact to a list")
+        if not list_id:
+            raise ValueError("list_id must be provided to add a contact to a list")
+
+        return self.__make_request(
+            "add_contact_to_list",
+            method="POST",
+            dynamic_data={"brand_id": self.brand_id},
+            body=[{
+                "contact_id": int(contact_id),
+                "lists": [list_id]
+            }]
+        )
+
+    def add_contacts_to_list(self, contact_ids, list_id):
+        """
+        Add multiple contacts to a list.
+        :param contact_ids: List of contact IDs to add.
+        :param list_id: The ID of the list to add contacts to.
+        """
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call add_contacts_to_list")
+        if not contact_ids or not isinstance(contact_ids, list):
+            raise ValueError("contact_ids must be provided to add contacts to a list")
+        if not list_id:
+            raise ValueError("list_id must be provided to add contacts to a list")
+        if len(contact_ids) < 1:
+            raise ValueError("contact_ids list must contain at least one contact ID")
+
+        body = [{"contact_id": int(contact_id), "lists": [list_id]} for contact_id in contact_ids]
+
+        return self.__make_request(
+            "add_contact_to_list",
+            method="POST",
+            dynamic_data={"brand_id": self.brand_id},
+            body=body
+        )
+
     def get_custom_field(self, field_id):
         """Get details for a custom field."""
         if not self.brand_id:
@@ -172,4 +242,33 @@ class APIConnector:
         return self.__make_request(
             "custom_fields",
             dynamic_data={"brand_id": self.brand_id, "field_id": field_id}
+        )
+
+    def create_campaign(self, name, message, contact_list_id, send_time=None):
+        """
+        Create a new campaign.
+        :param name: The name of the campaign.
+        :param message: The message content of the campaign.
+        :param contact_list_id: The ID of the contact list to send the campaign to.
+        :param send_time: Optional send time for the campaign.
+        :return: The response from the API.
+        """
+        if not self.brand_id:
+            raise ValueError("brand_id must be set to call create_campaign")
+
+        body = {
+            "name": name,
+            "body": message,
+            "status": "scheduled" if send_time else "send",
+            "audience": {
+                "contact_lists": [contact_list_id]
+            },
+            "scheduled": send_time
+        }
+
+        return self.__make_request(
+            "campaigns",
+            method="POST",
+            dynamic_data={"brand_id": self.brand_id},
+            body=body
         )
