@@ -58,10 +58,14 @@ def get_time_cards_with_missing_punches_by_pay_period(session, pay_period_id):
     :param pay_period_id: The ID of the pay period.
     :return: A list of time cards with missing punches for the specified pay period.
     """
+    missing_punch_times = [
+        '2001-01-01 00:00:00.0000000 -05:00',
+        '2000-01-01 00:00:00.0000000 +00:00'
+    ]
     return session.query(Timecard).join(DayEntry).filter(
         Timecard.pay_period_id == pay_period_id,
-        or_(DayEntry.clock_in_time == '2001-01-01 00:00:00.0000000 -05:00',
-            DayEntry.clock_out_time == '2001-01-01 00:00:00.0000000 -05:00')
+        or_(DayEntry.clock_in_time.in_(missing_punch_times),
+            DayEntry.clock_out_time.in_(missing_punch_times))
     ).all()
 
 
