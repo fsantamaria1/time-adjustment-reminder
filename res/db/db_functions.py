@@ -41,9 +41,13 @@ def get_time_cards_with_missing_punches(session):
     :return: A list of time cards with missing punches.
     """
     # 2001-01-01 00:00:00.0000000 -05:00 is ADPs placeholder for missing punches
+    missing_punch_times = [
+        '2001-01-01 00:00:00.0000000 -05:00',
+        '2000-01-01 00:00:00.0000000 +00:00'
+    ]
     return session.query(Timecard).join(DayEntry).filter(
-        or_(DayEntry.clock_in_time == '2001-01-01 00:00:00.0000000 -05:00',
-            DayEntry.clock_out_time == '2001-01-01 00:00:00.0000000 -05:00')
+        or_(DayEntry.clock_in_time.in_(missing_punch_times),
+            DayEntry.clock_out_time.in_(missing_punch_times))
     ).all()
 
 
