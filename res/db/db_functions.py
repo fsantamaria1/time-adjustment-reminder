@@ -38,7 +38,7 @@ def get_time_cards_with_missing_punches(session, pay_period_id=None):
     """
     Get time cards with missing punches.
     :param session: The database session.
-    :param pay_period_id: (Optional) The ID of the pay period ID to filter by.
+    :param pay_period_id: (Optional) The ID of the pay period to filter by.
     :return: A list of time cards with missing punches.
     """
     # 2001-01-01 00:00:00.0000000 -05:00 is ADPs placeholder for missing punches
@@ -52,7 +52,7 @@ def get_time_cards_with_missing_punches(session, pay_period_id=None):
     query = session.query(Timecard).join(DayEntry).filter(
         or_(DayEntry.clock_in_time.in_(missing_punch_times),
             DayEntry.clock_out_time.in_(missing_punch_times))
-    )
+    ).distinct()
 
     # If a pay period ID is provided, filter by it
     if pay_period_id is not None:
