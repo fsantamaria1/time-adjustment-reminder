@@ -17,6 +17,14 @@ class DateUtil:
         """
         self.date_format = date_format
 
+    @staticmethod
+    def get_today() -> date:
+        """
+        Returns today's date.
+        :return: date: Today's date as a date object.
+        """
+        return date.today()
+
     def str_to_date(self, date_str: str) -> datetime:
         """
         Converts a string to a datetime object.
@@ -52,7 +60,7 @@ class DateUtil:
             date_util.get_this_monday()
             '2023-10-16'
         """
-        today = date.today()
+        today = self.get_today()
         this_monday = self.get_monday_from_date(today)
         return self.date_to_str(this_monday)
 
@@ -65,7 +73,7 @@ class DateUtil:
             date_util.get_last_monday()
             '2023-10-09'
         """
-        today = date.today()
+        today = self.get_today()
         last_monday = self.get_monday_from_date(today) - timedelta(weeks=1)
         return self.date_to_str(last_monday)
 
@@ -78,7 +86,7 @@ class DateUtil:
             date_util.get_next_monday()
             '2023-10-23'
         """
-        today = date.today()
+        today = self.get_today()
         next_monday = self.get_monday_from_date(today) + timedelta(weeks=1)
         return self.date_to_str(next_monday)
 
@@ -94,7 +102,7 @@ class DateUtil:
         """
         if num_weeks < 1 or type(num_weeks) is not int:
             raise ValueError("num_weeks must be a positive integer")
-        today = date.today()
+        today = self.get_today()
         current_monday = self.get_monday_from_date(today)
 
         return [
@@ -129,11 +137,3 @@ class DateUtil:
             mondays.append(self.date_to_str(start_monday))
             start_monday += timedelta(weeks=1)
         return mondays
-
-    @staticmethod
-    def get_today() -> date:
-        """
-        Returns today's date.
-        :return: date: Today's date as a date object.
-        """
-        return date.today()
