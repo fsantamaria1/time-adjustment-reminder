@@ -107,7 +107,8 @@ class TestDateUtil:
 
     def test_get_mondays_between_dates_reversed(self, date_util):
         """Test reversed date range handling"""
-        assert date_util.get_mondays_between_dates('2023-10-16', '2023-10-01') == []
+        with pytest.raises(ValueError):
+            date_util.get_mondays_between_dates('2023-10-16', '2023-10-01')
 
     # Test Edge Cases
     def test_get_today(self):
