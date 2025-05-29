@@ -127,13 +127,24 @@ class DateUtil:
             ## This example returns a Monday even though there are no Mondays between the dates.
             This was done on purpose as we might want to get the Monday of the start date.
         """
-        if start_date_str > end_date_str:
-            return []
-        start_date = self.str_to_date(start_date_str)
-        end_date = self.str_to_date(end_date_str)
-        start_monday = self.get_monday_from_date(start_date)
-        mondays = []
-        while start_monday <= end_date:
-            mondays.append(self.date_to_str(start_monday))
-            start_monday += timedelta(weeks=1)
-        return mondays
+        try:
+            if not start_date_str or not end_date_str:
+                raise ValueError("start_date_str and end_date_str must be provided")
+
+            start_date = self.str_to_date(start_date_str)
+            end_date = self.str_to_date(end_date_str)
+            start_monday = self.get_monday_from_date(start_date)
+
+            if start_monday > end_date:
+                raise ValueError("start_date_str must be before or equal to end_date_str")
+
+            mondays = []
+            while start_monday <= end_date:
+                mondays.append(self.date_to_str(start_monday))
+                start_monday += timedelta(weeks=1)
+            return mondays
+
+        except ValueError as exc:
+            raise ValueError(
+                "start_date_str and end_date_str must be in the format YYYY-MM-DD"
+            ) from exc
