@@ -98,7 +98,7 @@ class DateUtil:
         Example:
             date_util = DateUtil()
             date_util.get_list_of_past_mondays(3)
-            ['2023-10-02', '2023-10-09', '2023-10-16']
+            ['2023-10-06', '2023-10-09', '2023-10-12']
         """
         if num_weeks < 1 or not isinstance(num_weeks, int):
             raise ValueError("num_weeks must be a positive integer")
@@ -124,7 +124,7 @@ class DateUtil:
             date_util = DateUtil()
             date_util.get_mondays_between_dates('2025-01-14', '2025-01-14')
             ['2025-01-13']
-            # Returns a Monday even though there are no Mondays between the dates.
+            ## This example returns a Monday even though there are no Mondays between the dates.
             This was done on purpose as we might want to get the Monday of the start date.
         """
         if start_date_str > end_date_str:
