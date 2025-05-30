@@ -98,7 +98,7 @@ class DateUtil:
         Example:
             date_util = DateUtil()
             date_util.get_list_of_past_mondays(3)
-            ['2023-10-06', '2023-10-09', '2023-10-12']
+            ['2023-10-02', '2023-10-09', '2023-10-16']
         """
         if num_weeks < 1 or not isinstance(num_weeks, int):
             raise ValueError("num_weeks must be a positive integer")
