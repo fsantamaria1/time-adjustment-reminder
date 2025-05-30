@@ -84,9 +84,6 @@ class TestDateUtil:
 
         results = date_util.get_list_of_past_mondays(3)
         assert len(results) == 3
-        # assert results[0] == (current_monday - timedelta(weeks=2)).strftime('%Y-%m-%d')
-        # assert results[-1] == current_monday.strftime('%Y-%m-%d')
-
         assert results[-1] == (current_monday - timedelta(weeks=2)).strftime('%Y-%m-%d')
         assert results[0] == current_monday.strftime('%Y-%m-%d')
 
