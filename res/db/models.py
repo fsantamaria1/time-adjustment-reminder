@@ -15,7 +15,7 @@ class Employee(Base):
     Employee model for the database.
     """
     __tablename__ = 'Employees'
-    __table_args__ = {'schema': os.environ.get('schema', 'dbo')}
+    __table_args__ = {'schema': os.environ.get('DB_SCHEMA', 'dbo')}
 
     associate_id = Column(String(20), primary_key=True)
     worker_id = Column(String(20), unique=True, nullable=False)
@@ -75,7 +75,7 @@ class PayPeriod(Base):
     Pay period model for the database.
     """
     __tablename__ = 'PayPeriods'
-    __table_args__ = {'schema': os.environ.get('schema', 'dbo')}
+    __table_args__ = {'schema': os.environ.get('DB_SCHEMA', 'dbo')}
 
     pay_period_id = Column(Integer, primary_key=True, autoincrement=True)
     pay_period_start = Column(Date)
@@ -124,7 +124,7 @@ class Timecard(Base):
     Timecard model for the database.
     """
     __tablename__ = 'Timecards'
-    __table_args__ = {'schema': os.environ.get('schema', 'dbo')}
+    __table_args__ = {'schema': os.environ.get('DB_SCHEMA', 'dbo')}
 
     timecard_id = Column(String(25), primary_key=True)
     associate_id = Column(String(20), ForeignKey(Employee.associate_id))
@@ -186,7 +186,7 @@ class DayEntry(Base):
     Day entry model for the database.
     """
     __tablename__ = 'DayEntries'
-    __table_args__ = {'schema': os.environ.get('schema', 'dbo')}
+    __table_args__ = {'schema': os.environ.get('DB_SCHEMA', 'dbo')}
 
     entry_id = Column(String(50), primary_key=True)
     timecard_id = Column(String(25), ForeignKey(Timecard.timecard_id))
