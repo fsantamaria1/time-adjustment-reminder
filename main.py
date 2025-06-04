@@ -39,13 +39,14 @@ Thanks!
 """
 
 
-def fetch_pay_period(session):
+def fetch_pay_period(session, date_util: DateUtil):
     """
     Fetch the pay period for the previous week.
+    :param date_util: The DateUtil instance to handle date operations.
     :param session: The database session.
     :return: The pay period object for the previous week.
     """
-    last_monday = DateUtil().get_last_monday()
+    last_monday = date_util.get_last_monday()
     return get_pay_period_by_start_date(session, last_monday)
 
 
@@ -138,13 +139,16 @@ def main():
     Main function to run the time adjustment reminder script.
     """
     logger.info("Starting the time adjustment reminder script.")
-    start_time = DateUtil().get_current_datetime()
+    # Initialize date utility
+    date_util = DateUtil()
+    # Record the start time of the process
+    start_time = date_util.get_current_datetime()
 
     try:
         db = Database()
         with db.get_new_session() as session:
             # Retrieve the pay period for the previous week
-            pay_period = fetch_pay_period(session)
+            pay_period = fetch_pay_period(session, date_util)
             logger.info("Processing pay period: %s (%s to %s)",
                         pay_period.pay_period_id,
                         pay_period.pay_period_start,
@@ -167,7 +171,7 @@ def main():
         logger.exception("Process failed with error: %s", e)
         raise
     finally:
-        end_time = DateUtil().get_current_datetime()
+        end_time = date_util.get_current_datetime()
         duration = end_time - start_time
         logger.info("Process completed in %s seconds.", duration.total_seconds())
 
