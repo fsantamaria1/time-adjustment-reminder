@@ -95,7 +95,7 @@ def process_contacts(api_connector, worker_ids):
                         adp_worker_id,
                         contact.get('first_name'),
                         contact.get('last_name')
-            )
+                        )
 
     return contact_ids
 
@@ -109,8 +109,8 @@ def create_campaign(api_connector, pay_period, contact_ids):
     :return: The campaign ID.
     """
     reminder_name = (f"Time Adjustment Reminder "
-                         f"{pay_period.pay_period_start} - "
-                         f"{pay_period.pay_period_end}")
+                     f"{pay_period.pay_period_start} - "
+                     f"{pay_period.pay_period_end}")
 
     # Create contact list
     contact_list = api_connector.create_contact_list(reminder_name)
