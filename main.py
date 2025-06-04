@@ -1,6 +1,7 @@
 """
 Main module of the time adjustment reminder script.
 """
+import logging
 import os
 from res.api import APIConnector
 from res.db.db_functions import (
@@ -9,6 +10,17 @@ from res.db.db_functions import (
 )
 from res.db.database import Database
 from res.date_util import DateUtil
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('time_adjustment.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # Get the environment variables for API key and brand ID
 API_KEY = os.getenv("SLICK_TEXT_API_KEY")
@@ -48,6 +60,8 @@ def get_missing_punch_data(session, pay_period):
         session,
         pay_period.pay_period_id
     )
+    logger.info("Worker IDs with missing punches for pay period %s: %s",
+                pay_period.pay_period_id, worker_ids)
 
     return worker_ids
 
@@ -67,10 +81,21 @@ def process_contacts(api_connector, worker_ids):
         adp_worker_id = contact.get('custom_fields', {}).get('adp_associate_id', None)
 
         if not adp_worker_id:
+            logger.warning("Contact %s %s %s does not have an ADP worker ID.",
+                           contact_id,
+                           contact.get('first_name'),
+                           contact.get('last_name')
+                           )
             continue
 
         if adp_worker_id in worker_ids:
             contact_ids.append(contact_id)
+            logger.info("Matched contact: %s, %s, %s %s",
+                        contact_id,
+                        adp_worker_id,
+                        contact.get('first_name'),
+                        contact.get('last_name')
+            )
 
     return contact_ids
 
@@ -90,9 +115,12 @@ def create_campaign(api_connector, pay_period, contact_ids):
     # Create contact list
     contact_list = api_connector.create_contact_list(reminder_name)
     contact_list_id = contact_list.get("contact_list_id")
+    logger.info("Created contact list: %s with ID: %s",
+                reminder_name, contact_list_id)
 
     # Add contacts to the contact list
     api_connector.add_contacts_to_list(contact_ids, contact_list_id)
+    logger.info("Added %d contacts to the contact list %s.", len(contact_ids), contact_list_id)
 
     # Create campaign
     campaign = api_connector.create_campaign(
@@ -100,6 +128,7 @@ def create_campaign(api_connector, pay_period, contact_ids):
         MESSAGE_CONTENT,
         contact_list_id
     )
+    logger.info("Created campaign: %s with ID: %s", reminder_name, campaign.get("campaign_id"))
 
     return campaign
 
@@ -108,12 +137,18 @@ def main():
     """
     Main function to run the time adjustment reminder script.
     """
+    logger.info("Starting the time adjustment reminder script.")
+    start_time = DateUtil().get_current_datetime()
 
     try:
         db = Database()
         with db.get_new_session() as session:
             # Retrieve the pay period for the previous week
             pay_period = fetch_pay_period(session)
+            logger.info("Processiong pay period: %s (%s to %s)",
+                        pay_period.pay_period_id,
+                        pay_period.pay_period_start,
+                        pay_period.pay_period_end)
 
             # Get worker IDs with missing punches
             worker_ids = get_missing_punch_data(session, pay_period)
@@ -123,12 +158,18 @@ def main():
             contact_ids = process_contacts(api_connector, worker_ids)
 
             if not contact_ids:
+                logger.info("No matching contacts found for worker IDs with missing punches.")
                 return
 
             # Create a campaign for the contacts with missing punches
             create_campaign(api_connector, pay_period, contact_ids)
     except Exception as e:
-        raise e
+        logger.exception("Process failed with error: %s", e)
+        raise
+    finally:
+        end_time = DateUtil().get_current_datetime()
+        duration = end_time - start_time
+        logger.info("Process completed in %s seconds.", duration.total_seconds())
 
 
 if __name__ == "__main__":
