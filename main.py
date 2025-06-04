@@ -145,7 +145,7 @@ def main():
         with db.get_new_session() as session:
             # Retrieve the pay period for the previous week
             pay_period = fetch_pay_period(session)
-            logger.info("Processiong pay period: %s (%s to %s)",
+            logger.info("Processing pay period: %s (%s to %s)",
                         pay_period.pay_period_id,
                         pay_period.pay_period_start,
                         pay_period.pay_period_end)
