@@ -126,7 +126,7 @@ def create_campaign(api_connector, pay_period, contact_ids):
     # Create campaign
     campaign = api_connector.create_campaign(
         reminder_name,
-        MESSAGE_CONTENT,
+        MESSAGE_CONTENT.strip(),
         contact_list_id
     )
     logger.info("Created campaign: %s with ID: %s", reminder_name, campaign.get("campaign_id"))
