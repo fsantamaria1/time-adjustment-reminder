@@ -61,9 +61,8 @@ def get_missing_punch_data(session, pay_period):
         session,
         pay_period.pay_period_id
     )
-    logger.info("Worker IDs with missing punches for pay period %s: %s",
-                pay_period.pay_period_id, worker_ids)
-
+    logger.info("Found %d workers with missing punches for pay period %s: %s",
+                len(worker_ids), pay_period.pay_period_id, worker_ids)
     return worker_ids
 
 
