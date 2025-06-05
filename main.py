@@ -75,28 +75,29 @@ def process_contacts(api_connector, worker_ids):
     """
     contacts = api_connector.get_all_contacts(brand_id=BRAND_ID)
     contact_ids = []
+    missing_worker_id_count = 0
 
     for contact in contacts:
         contact_id = contact.get('contact_id')
         adp_worker_id = contact.get('custom_fields', {}).get('adp_associate_id', None)
 
         if not adp_worker_id:
-            logger.warning("Contact %s %s %s does not have an ADP worker ID.",
-                           contact_id,
-                           contact.get('first_name'),
-                           contact.get('last_name')
-                           )
+            missing_worker_id_count += 1
             continue
 
         if adp_worker_id in worker_ids:
             contact_ids.append(contact_id)
-            logger.info("Matched contact: %s, %s, %s %s",
+            logger.info("Matched contact: %s, %s, (%s %s)",
                         contact_id,
                         adp_worker_id,
                         contact.get('first_name'),
                         contact.get('last_name')
                         )
 
+    if missing_worker_id_count:
+        logger.warning("%d contacts missing ADP worker ID", missing_worker_id_count)
+
+    logger.info("Matched %d contacts to worker IDs", len(contact_ids))
     return contact_ids
 
 
