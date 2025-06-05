@@ -149,6 +149,11 @@ def main():
         with db.get_new_session() as session:
             # Retrieve the pay period for the previous week
             pay_period = fetch_pay_period(session, date_util)
+
+            if not pay_period:
+                logger.error("No pay period found for the previous week.")
+                return
+
             logger.info("Processing pay period: %s (%s to %s)",
                         pay_period.pay_period_id,
                         pay_period.pay_period_start,
@@ -156,6 +161,10 @@ def main():
 
             # Get worker IDs with missing punches
             worker_ids = get_missing_punch_data(session, pay_period)
+            if not worker_ids:
+                logger.info("No workers found with missing punches for pay period %s.",
+                            pay_period.pay_period_id)
+                return
 
             # Process contacts
             api_connector = APIConnector(token=API_KEY, brand_id=BRAND_ID)
@@ -167,6 +176,7 @@ def main():
 
             # Create a campaign for the contacts with missing punches
             create_campaign(api_connector, pay_period, contact_ids)
+
     except Exception as e:
         logger.exception("Process failed with error: %s", e)
         raise
