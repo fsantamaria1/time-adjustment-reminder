@@ -25,6 +25,14 @@ class DateUtil:
         """
         return date.today()
 
+    @staticmethod
+    def get_current_datetime() -> datetime:
+        """
+        Returns the current time.
+        :return: datetime: The current time as a datetime object.
+        """
+        return datetime.now()
+
     def str_to_date(self, date_str: str) -> datetime:
         """
         Converts a string to a datetime object.

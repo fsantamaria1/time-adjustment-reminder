@@ -3,9 +3,6 @@ This module contains the configuration class for the database connection.
 """
 import os
 import urllib.parse
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 class Config:
