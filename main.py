@@ -79,7 +79,11 @@ def process_contacts(api_connector, worker_ids):
 
     for contact in contacts:
         contact_id = contact.get('contact_id')
-        adp_worker_id = contact.get('custom_fields', {}).get('adp_associate_id', None)
+        custom_fields = contact.get('custom_fields') or {}
+        adp_worker_id = custom_fields.get('adp_associate_id')
+
+        if not contact.get('custom_fields'):
+            logger.warning("Contact %s (%s %s) missing custom_fields", contact.get('contact_id'), contact.get('first_name'), contact.get('last_name'))
 
         if not adp_worker_id:
             missing_worker_id_count += 1
@@ -175,7 +179,7 @@ def main():
                 return
 
             # Create a campaign for the contacts with missing punches
-            create_campaign(api_connector, pay_period, contact_ids)
+            # create_campaign(api_connector, pay_period, contact_ids)
 
     except Exception as e:
         logger.exception("Process failed with error: %s", e)
