@@ -183,7 +183,7 @@ def main():
                 return
 
             # Create a campaign for the contacts with missing punches
-            # create_campaign(api_connector, pay_period, contact_ids)
+            create_campaign(api_connector, pay_period, contact_ids)
 
     except Exception as e:
         logger.exception("Process failed with error: %s", e)
