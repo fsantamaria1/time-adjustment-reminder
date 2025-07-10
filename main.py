@@ -79,7 +79,7 @@ def process_contacts(api_connector, worker_ids):
 
     for contact in contacts:
         contact_id = contact.get('contact_id')
-        raw_custom_fields = contact.get('raw_custom_fields')
+        raw_custom_fields = contact.get('custom_fields')
         custom_fields = raw_custom_fields or {}
         adp_worker_id = custom_fields.get('adp_associate_id')
         first_name = contact.get('first_name', '')
