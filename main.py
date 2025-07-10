@@ -81,12 +81,14 @@ def process_contacts(api_connector, worker_ids):
         contact_id = contact.get('contact_id')
         custom_fields = contact.get('custom_fields') or {}
         adp_worker_id = custom_fields.get('adp_associate_id')
+        first_name = contact.get('first_name', '')
+        last_name = contact.get('last_name', '')
 
         if contact.get('custom_fields') is None:
             logger.warning("Contact %s (%s %s) missing custom_fields",
-                           contact.get('contact_id'),
-                           contact.get('first_name'),
-                           contact.get('last_name')
+                           contact_id,
+                           first_name,
+                           last_name
                            )
 
         if not adp_worker_id:
@@ -98,8 +100,8 @@ def process_contacts(api_connector, worker_ids):
             logger.info("Matched contact: %s, %s, (%s %s)",
                         contact_id,
                         adp_worker_id,
-                        contact.get('first_name'),
-                        contact.get('last_name')
+                        first_name,
+                        last_name
                         )
 
     if missing_worker_id_count:
