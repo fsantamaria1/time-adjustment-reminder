@@ -82,7 +82,7 @@ def process_contacts(api_connector, worker_ids):
         custom_fields = contact.get('custom_fields') or {}
         adp_worker_id = custom_fields.get('adp_associate_id')
 
-        if not contact.get('custom_fields'):
+        if contact.get('custom_fields') is None:
             logger.warning("Contact %s (%s %s) missing custom_fields",
                            contact.get('contact_id'),
                            contact.get('first_name'),
