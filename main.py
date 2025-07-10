@@ -81,7 +81,7 @@ def process_contacts(api_connector, worker_ids):
         contact_id = contact.get('contact_id')
         raw_custom_fields = contact.get('custom_fields')
         custom_fields = raw_custom_fields or {}
-        adp_worker_id = custom_fields.get('adp_associate_id')
+        adp_worker_id = custom_fields.get('adp_associate_id', None)
         first_name = contact.get('first_name', '')
         last_name = contact.get('last_name', '')
 
@@ -92,7 +92,7 @@ def process_contacts(api_connector, worker_ids):
                            last_name
                            )
 
-        if not adp_worker_id:
+        if adp_worker_id is None:
             missing_worker_id_count += 1
             continue
 
