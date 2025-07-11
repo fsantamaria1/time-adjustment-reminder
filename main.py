@@ -69,8 +69,8 @@ def get_missing_punch_data(session, pay_period):
 def process_contacts(api_connector, worker_ids):
     """
     Process contacts and match against worker IDs with missing punches.
-    :param api_connector:
-    :param worker_ids:
+    :param api_connector: The API connector instance.
+    :param worker_ids: List of worker IDs to match against contacts.
     :return:
     """
     contacts = api_connector.get_all_contacts(brand_id=BRAND_ID)
