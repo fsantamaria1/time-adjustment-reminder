@@ -69,8 +69,8 @@ def get_missing_punch_data(session, pay_period):
 def process_contacts(api_connector, worker_ids):
     """
     Process contacts and match against worker IDs with missing punches.
-    :param api_connector:
-    :param worker_ids:
+    :param api_connector: The API connector instance.
+    :param worker_ids: List of worker IDs to match against contacts.
     :return:
     """
     contacts = api_connector.get_all_contacts(brand_id=BRAND_ID)
@@ -79,9 +79,20 @@ def process_contacts(api_connector, worker_ids):
 
     for contact in contacts:
         contact_id = contact.get('contact_id')
-        adp_worker_id = contact.get('custom_fields', {}).get('adp_associate_id', None)
+        raw_custom_fields = contact.get('custom_fields')
+        custom_fields = raw_custom_fields or {}
+        adp_worker_id = custom_fields.get('adp_associate_id', None)
+        first_name = contact.get('first_name', '')
+        last_name = contact.get('last_name', '')
 
-        if not adp_worker_id:
+        if raw_custom_fields is None:
+            logger.warning("Contact %s (%s %s) missing custom_fields",
+                           contact_id,
+                           first_name,
+                           last_name
+                           )
+
+        if adp_worker_id is None:
             missing_worker_id_count += 1
             continue
 
@@ -90,8 +101,8 @@ def process_contacts(api_connector, worker_ids):
             logger.info("Matched contact: %s, %s, (%s %s)",
                         contact_id,
                         adp_worker_id,
-                        contact.get('first_name'),
-                        contact.get('last_name')
+                        first_name,
+                        last_name
                         )
 
     if missing_worker_id_count:
